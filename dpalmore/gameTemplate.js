@@ -1,6 +1,8 @@
 //sources
 // https://eloquentjavascript.net/code/chapter/17_canvas.js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
+// Mouse function learned in class on 3/25/21
+//******** ALL GLOBALS AND UTILITY FUNCTIONS *********
 
 //initializing GLOBAL variables to create a canvas
 let canvasDiv;
@@ -8,7 +10,14 @@ let canvas;
 let ctx;
 let WIDTH = 768;
 let HEIGHT= 768;
-let GRAVITY = 9.8; 
+let GRAVITY = 9.8;
+let SCORE = 0;
+let paused = false;
+let timerThen = Math.floor(Date.now() / 1000);
+
+
+//walls
+let walls = [];
 
 //array for mobs/enemies
 let mobs1 = [];
@@ -35,6 +44,82 @@ let mouseClicks = {
 let mouseClickX = 0;
 let mouseClickY = 0;
 
+function mouseCollide(obj) {
+  if (mouseClickX <= obj.x + obj.w &&
+    obj.x <= mouseClickX&&
+    mouseClickY <= obj.y + obj.h &&
+    obj.y <= mouseClickY
+  ) {
+    return true;
+  }
+}
+
+//spawner
+function spawnMob(x, arr){
+for (i = 0; i < x; i++){
+  arr.push(new Mob(60,60, 200, 100, 'pink', Math.random()*-2, Math.random()*-2));
+}
+}
+// draws text on canvas
+function drawText(color, font, align, base, text, x, y) {
+  ctx.fillStyle = color;
+  ctx.font = font;
+  ctx.textAlign = align;
+  ctx.textBaseline = base;
+  ctx.fillText(text, x, y);
+}
+
+//Timers and counters
+
+function countUp(end) {
+  timerNow = Math.floor(Date.now() / 1000);
+  currentTimer = timerNow - timerThen;
+  if (currentTimer >= end){
+    if (mobs2.length < 10){
+    spawnMob(20, mobs2);
+  }
+    return end;
+  }
+  return currentTimer;
+}
+
+function counter() {
+  timerNow = Math.floor(Date.now() / 1000);
+  currentTimer = timerNow - timerThen;
+  return currentTimer;
+}
+
+function timerUp(x, y) {
+  timerNow = Math.floor(Date.now() / 1000);
+  currentTimer = timerNow - timerThen;
+  if (currentTimer <= y && typeof (currentTimer + x) != "undefined") {
+      return currentTimer;
+  } else {
+      timerThen = timerNow;
+      return x;
+  }
+}
+
+function timerDown() {
+  this.time = function (x, y) {
+      // this.timerThen = Math.floor(Date.now() / 1000);
+      // this.timerNow = Math.floor(Date.now() / 1000);
+      this.timerThen = timerThen;
+      this.timerNow = Math.floor(Date.now() / 1000);
+      this.tick = this.timerNow - this.timerThen;
+      if (this.tick <= y && typeof (this.tick + x) != "undefined") {
+          return y - this.tick;
+      } else {
+          this.timerThen = this.timerNow;
+          return x;
+      }
+  };
+}
+
+
+
+//########################### Initialize game function #######################
+
 function init() {
   // create a new div element
   canvasDiv = document.createElement("div");
@@ -54,7 +139,8 @@ function init() {
   initialized = true;
 }
 
-// Noah suggested we create a sprite
+
+//############################ ALL GAME CLASSES #########################
 class Sprite {
   constructor(w, h, x, y, c) {
     this.w = w;
@@ -99,7 +185,6 @@ class Player extends Sprite {
     if ('w' in keysDown || 'W' in keysDown) { // Player control
         this.vx = 0;
         this.vy = -this.speed;
-        console.log('w!!!');
     } else if ('s' in keysDown || 'S' in keysDown) { // Player control
         this.vx = 0;
         this.vy = this.speed;
@@ -111,9 +196,12 @@ class Player extends Sprite {
     } else if ('d' in keysDown || 'D' in keysDown) { // Player control
         this.vy = 0;
         this.vx = this.speed;
-    } else if ('e' in keysDown || 'D' in keysDown) { // Player control
+    } else if ('e' in keysDown || 'E' in keysDown) { // Player control
       this.w += 1;
   }
+  else if ('p' in keysDown || 'P' in keysDown) { // Player control
+    paused = true;
+}
     else if (' ' in keysDown && this.canjump) { // Player control
       console.log(this.canjump);
       this.vy -= 45;
@@ -126,7 +214,6 @@ class Player extends Sprite {
     }
 }
   update(){
-    this.vy = GRAVITY;
     this.moveinput();
     if (!this.inbounds()){
       if (this.x <= 0) {
@@ -173,6 +260,11 @@ class Mob extends Sprite {
         // alert('out of bounds');
         // console.log('out of bounds');
       }
+      if (mouseCollide(this)){
+        // alert("direct hit!!!");
+        // how do I tell it to be spliced???
+        this.spliced = true;
+      }
     }
     draw() {
       ctx.fillStyle = this.color;
@@ -181,19 +273,33 @@ class Mob extends Sprite {
     }
 }
 
-// create instance of class
-let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'blue', 0, 0);
+class Wall extends Sprite {
+  constructor(w, h, x, y, c) {
+    super(w, h, x, y, c);
+    this.type = "normal";
+    }
+    draw() {
+      ctx.fillStyle = this.color;
+      ctx.fillRect(this.x, this.y, this.w, this.h);
+      ctx.strokeRect(this.x, this.y, this.w, this.h);
+    }
+}
+
+// ###################### INSTANTIATE CLASSES ##########################
+let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'red', 0, 0);
 
 // adds two different sets of mobs to the mobs array
 for (i = 0; i < 10; i++){
-  mobs1.push(new Mob(60,60, 200, 100, 'green', Math.random()*-2, Math.random()*-2));
+  mobs1.push(new Mob(60,60, 200, 100, 'pink', Math.random()*-2, Math.random()*-2));
 }
-
 while (mobs2.length < 20){
-  mobs2.push(new Mob(10,10, 250, 200, 'orange', Math.random()*-2, Math.random()*-2));
+  mobs2.push(new Mob(10,10, 250, 200, 'purple', Math.random()*-2, Math.random()*-2));
+}
+while (walls.length < 20){
+  walls.push(new Wall(400,10, Math.floor(Math.random()*500), Math.floor(Math.random()*1000), 'orange'));
 }
 
-// creating object with keys pressed
+// ########################## USER INPUT ###############################
 
 let keysDown = {};
 
@@ -206,7 +312,7 @@ addEventListener("keyup", function (e) {
 }, false);
 
 // gets mouse position when clicked
-addEventListener('mousemove', e => {
+addEventListener('mousemove', function (e) {
   mouseX = e.offsetX;
   mouseY = e.offsetY;
   // we're gonna use this
@@ -217,9 +323,7 @@ addEventListener('mousemove', e => {
 });
 
 // gets mouse position when clicked
-addEventListener('mousedown', mouseClick);
-
-function mouseClick(e) {
+addEventListener('mousedown', function (e) {
   console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
   mouseClickX = e.clientX;
   mouseClickY = e.clientY;
@@ -227,24 +331,21 @@ function mouseClick(e) {
     x: mouseClickX,
     y: mouseClickY
   };
-}
+});
 
-// draws text on canvas
-function drawText(color, font, align, base, text, x, y) {
-  ctx.fillStyle = color;
-  ctx.font = font;
-  ctx.textAlign = align;
-  ctx.textBaseline = base;
-  ctx.fillText(text, x, y);
-}
+addEventListener('mouseup', function() {
+  mouseClickX = null;
+  mouseClickY = null;
+});
 
-// ########## updates all elements on canvas ##########
+// ###################### UPDATE ALL ELEMENTS ON CANVAS ################################
 function update() {
   player.update();
   //updates all mobs in a group
   for (let m of mobs1){
     m.update();
     if (player.collide(m)){
+      SCORE++;
       m.spliced = true;
     }
   }
@@ -254,23 +355,37 @@ function update() {
       m.spliced = true;
     }
   }
+   for (let m1 of mobs1) {
+     for (let m2 of mobs2){
+       if (m1.collide(m2)){
+        //  console.log('two boxes collided');
+        m1.color = 'blue';
+        m2.color = 'green';
+       }
+     }
+   }
+  // splice stuff as needed
   for (let m in mobs1){
     if (mobs1[m].spliced){
       mobs1.splice(m, 1);
     }
   }
-
 }
 
-// draws all the stuff on the canvas that you want to draw
+// ########## DRAW ALL ELEMENTS ON CANVAS ##########
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawText('red', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
-  drawText('red', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
-  drawText('red', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
-  drawText('red', "24px Helvetica", "left", "top", "mouseclick: " + mouseClickX + " " + mouseClickY, 0, 32);
+  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
+  drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
+  drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
+  drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
+  drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClickX + " " + mouseClickY, 0, 32);
   player.draw();
+
+  for (let w of walls){
+    w.draw();
+  }
   for (let m of mobs1){
     m.draw();
   }
@@ -278,6 +393,7 @@ function draw() {
     m.draw();
   }
 }
+
 
 // set variables necessary for game loop
 let fps;
@@ -286,14 +402,16 @@ let delta;
 let gDelta;
 let then = performance.now();
 
-//main game loop
+// ########## MAIN GAME LOOP ##########
 function main() {
   now = performance.now();
   delta = now - then;
   gDelta = (Math.min(delta, 17));
   fps = Math.ceil(1000 / gDelta);
   if (initialized) {
-    update(gDelta);
+    if (!paused){
+      update(gDelta);
+    }
     draw();
   }
   then = now;
