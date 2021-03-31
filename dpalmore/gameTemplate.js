@@ -2,6 +2,8 @@
 // https://eloquentjavascript.net/code/chapter/17_canvas.js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
 // Mouse function learned in class on 3/25/21
+// Color changing code provided by Mr. Cozort last calss (3/25/21)
+//Timer code provided by Mr. Cozort in class today (3/31/21)
 //******** ALL GLOBALS AND UTILITY FUNCTIONS *********
 
 //initializing GLOBAL variables to create a canvas
@@ -57,7 +59,7 @@ function mouseCollide(obj) {
 //spawner
 function spawnMob(x, arr){
 for (i = 0; i < x; i++){
-  arr.push(new Mob(60,60, 200, 100, 'pink', Math.random()*-2, Math.random()*-2));
+  arr.push(new Mob(60,60, 200, 100 ('pink'), Math.random()*-2, Math.random()*-2));
 }
 }
 // draws text on canvas
@@ -114,6 +116,29 @@ function timerDown() {
           return x;
       }
   };
+}
+
+
+
+//########################### Initialize game function #######################
+
+function init() {
+  // create a new div element
+  canvasDiv = document.createElement("div");
+  canvasDiv.id = "chuck";
+  // and give it some content
+  canvas = document.createElement('canvas');
+  // add the text node to the newly created div
+  canvasDiv.appendChild(canvas);
+  // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(canvasDiv, currentDiv);
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+  document.getElementById("chuck").style.width = canvas.width + 'px';
+  document.getElementById("chuck").style.height = canvas.height + 'px';
+  ctx = canvas.getContext('2d');
+  initialized = true;
 }
 
 
@@ -290,7 +315,7 @@ let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'red', 0, 0);
 
 // adds two different sets of mobs to the mobs array
 for (i = 0; i < 10; i++){
-  mobs1.push(new Mob(60,60, 200, 100, 'pink', Math.random()*-2, Math.random()*-2));
+  mobs1.push(new Mob(60,60, 200, 10, 'pink', Math.random()*-2, Math.random()*-2));
 }
 while (mobs2.length < 20){
   mobs2.push(new Mob(10,10, 250, 200, 'purple', Math.random()*-2, Math.random()*-2));
@@ -352,6 +377,7 @@ function update() {
   for (let m of mobs2){
     m.update();
     if (player.collide(m)){
+      SCORE++;
       m.spliced = true;
     }
   }
@@ -376,6 +402,7 @@ function update() {
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawText('black', "24px Helvetica", "left", "top", "Timer: " + countUp(25), 500, 0);
   drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
   drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
   drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
