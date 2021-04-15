@@ -2,13 +2,17 @@
 // https://eloquentjavascript.net/code/chapter/17_canvas.js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
 //Alert pop-up from W3 Schools, originally "Press enter", changed to "Ready, Set Go"
-//Color change and Gravity codes provided by Mr. Cozort in class
+//Gravity code provided by Mr. Cozort in class
 //Timer/Counter code provided by Mr. Cozort
 //Game over alert code provided by Mr. Cozort
 
-//RULES: Score as many points as possible by eating the black and yellow mobs. One point is awarded for each of black and orange squares that are eaten
-//RULES PT 2: Eat as manny mobs as possible in 60 seconds before the game ends. Refresh page to restart the game after 60 seconds.
+//RULES: Score as many points as possible by eating the mobs. One point is awarded for each of black and pink squares that are eaten.
+//RULES PT 2: Eat as many mobs as possible in 60 seconds before the game ends. Refresh page to restart the game after 60 seconds.
+//RULES PT 3: Avoid Yellow Mobs!! If they are eaten, you lose a point each time. Try to Eat the Black and Pink Mobs only!
+//RULES PT 4: If you sucessfuly eat all the black mobs in time, avoid the yellow ones as best you can before time runs out
+//RULES PT 5: Let's see how many points you can get! 
 
+//Code for this project provided by Mr. Cozort and online resources (W3 Schools, Pothon Programming)
 //##################### ALL GLOBALS AND UTILITY FUNCTIONS ###################
 
 //initializing GLOBAL variables to create a canvas
@@ -73,7 +77,7 @@ function signum(){
 //mob spawner
 function spawnMob(x, arr, color){
 for (i = 0; i < x; i++){
-  arr.push(new Mob(60,60, 200, 100, color, Math.random()*3*signum(), Math.random()*3*signum()));
+arr.push(new Mob(60,60, 200, 100, color, Math.random()*3*signum(), Math.random()*3*signum()));
 }
 }
 // draws text on canvas
@@ -112,7 +116,7 @@ function timerUp(x, y) {
       return x;
   }
 }
-
+//Indicates properties of the timer
 function timerDown() {
   this.time = function (x, y) {
       // this.timerThen = Math.floor(Date.now() / 1000);
@@ -177,7 +181,7 @@ class Sprite {
         return false;
       }
     }
-    //De
+    
     //source for collision: https://pothonprogramming.github.io/
     collideRectangle(rect) {
 
@@ -194,15 +198,13 @@ class Sprite {
       To do that, we divide dx and dy by it's width and height respectively. */
       if (Math.abs(dx / this.w) > Math.abs(dy / this.h)) {
       
-
         if (dx < 0) {rect.x = this.x - rect.w;
-          ctx.fillStyle = 'green';
+          ctx.fillStyle = 'purple';
           ctx.fillRect(0, 0, WIDTH/0, HEIGHT/0);
           ctx.strokeRect(0, 0, WIDTH/0, HEIGHT/0);
         }// left
         else rect.x = this.x + this.w; // right
         
-
       } else {
 
         if (dy < 0) rect.y = this.y - rect.h; // top
@@ -223,7 +225,7 @@ class Sprite {
       }
     }
 }
-
+// Indicates which keys the player can use to move right, left, up, down or jump
 class Player extends Sprite {
   constructor(w, h, x, y, c, vx, vy) {
   super(w, h, x, y, c);
@@ -325,6 +327,7 @@ class Mob extends Sprite {
         console.log("direct hit!!!");
         // how do I tell it to be spliced???
         this.spliced = true;
+        SCORE++;
         // this.vx *= -1;
       }
     }
@@ -347,6 +350,9 @@ class Wall extends Sprite {
     }
 }
 
+// ### added by Mr. Cozort
+
+//this class is intended to create an effect when the mouse clicked
 class Effect extends Sprite {
   constructor(w, h, x, y, c) {
     super(w, h, x, y, c);
@@ -358,8 +364,8 @@ class Effect extends Sprite {
       ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
     update(){
-      this.w+=2;
-      this.h+=2;
+      this.w+=5;
+      this.h+=5;
       this.x-=1;
       this.y-=1;
       setTimeout(() => this.spliced = true, 250)
@@ -367,16 +373,16 @@ class Effect extends Sprite {
 }
 
 // ###################### INSTANTIATE CLASSES ##########################
-let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'red', 0, 0);
+let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'pink', 0, 0);
 
 // adds two different sets of mobs to the mobs array
-spawnMob(20, mobs1, 'black');
-spawnMob(20, mobs2, 'yellow');
+spawnMob(40, mobs1, 'black');
+spawnMob(40, mobs2, 'yellow');
 
-
-while (walls.length < 20){
-  walls.push(new Wall(200,15, Math.floor(Math.random()*500), Math.floor(Math.random()*1000), 'green'));
-}
+// Got rid of the walls because I do not think they serve any purpose for the game.
+//while (walls.length < 20){
+  //walls.push(new Wall(200,15, Math.floor(Math.random()*500), Math.floor(Math.random()*1000), 'green'));
+//}
 
 // ########################## USER INPUT ###############################
 
@@ -407,7 +413,7 @@ addEventListener('mousedown', function (e) {
   // console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
   mouseClick.x = e.offsetX;
   mouseClick.y = e.offsetY;
-  effects.push(new Effect(15, 15, mouseClick.x - 7, mouseClick.y - 7, 'green'))
+  effects.push(new Effect(15, 15, mouseClick.x - 7, mouseClick.y - 7, 'purple'))
 });
 
 addEventListener('mouseup', function() {
@@ -434,27 +440,28 @@ function update() {
   }
   GAMETIME = counter();
   if (GAMETIME > 60){
-   alert("game over...");
-   }
+    alert("game over...");
+  }
+ 
   //updates all mobs in a group
   for (let w of walls){
    
     // if (player.collide(w) && player.dy == 1){
-    //   player.dx = 0;
+    //  player.dx = 0;
     //   player.vy*=-1;
-    //   player.y = w.y-player.h;
+     //  player.y = w.y-player.h;
     // }
     // if (player.collide(w) && player.dy == -1){
-    //   player.vy*=-1;
-    //   player.y = w.y + w.h;
+    // player.vy*=-1;
+     //  player.y = w.y + w.h;
     // }
     // if (player.collide(w) && player.dx == 1){
-    //   player.vx*=-1;
-    //   player.x = w.x-player.w;
+     //  player.vx*=-1;
+      // player.x = w.x-player.w;
     // }
-    // if (player.collide(w) && player.dx == -1){
-    //   player.vx*=-1;
-    //   player.x = w.x + w.w;
+     //if (player.collide(w) && player.dx == -1){
+      // player.vx*=-1;
+    //  player.x = w.x + w.w;
     // }
   }
   for (let m of mobs1){
@@ -467,20 +474,11 @@ function update() {
   for (let m of mobs2){
     m.update();
     if (player.collide(m)){
+      SCORE-=1;
       m.spliced = true;
+      console.log(mobs2)
     }
   }
-   for (let m2 of mobs2) {
-     for (let m1 of mobs1){
-       if (m2.collide(m1)){
-        m1.vx *= 1;
-        m1.vy *= 1;
-        m2.vx *= 1;
-        m2.vy *= 1;
-        // m2.spliced = true;
-       }
-     }
-   }
   // splice stuff as needed
   for (let m in mobs1){
     if (mobs1[m].spliced){
@@ -493,20 +491,19 @@ function update() {
     }
   }
   if (mobs1.length < 1){
-    spawnMob(30, mobs1);
+    spawnMob(40, mobs1);
   }
 }
-
-// ########## DRAW ALL ELEMENTS ON CANVAS ##########
+  // ########## DRAW ALL ELEMENTS ON CANVAS ########## Displays Timer and Scoreboard on the canvas (Borrowed from Mr.cozort)
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawText('black', "24px Helvetica", "left", "top", "Timer: " + GAMETIME, 500, 0);
+  drawText('black', "24px Helvetica", "right", "top", "Timer: " + GAMETIME, 300, 0);
   drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
-  drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
-  drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
-  drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
-  drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClick.x + " " + mouseClick.y, 0, 32);
+  // drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
+  // drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
+  // drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
+  // drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClick.x + " " + mouseClick.y, 0, 32);
   player.draw();
 
   for (let w of walls){
@@ -523,14 +520,14 @@ function draw() {
   }
 }
 
-// set variables necessary for game loop
+// set variables necessary for game loop (Borrowed from Mr. Cozort)
 let fps;
 let now;
 let delta;
 let gDelta;
 let then = performance.now();
 
-// ########## MAIN GAME LOOP ##########
+// ########## MAIN GAME LOOP ########## (Borrowed from Mr. Cozort)
 function main() {
   now = performance.now();
   delta = now - then;
@@ -545,9 +542,9 @@ function main() {
   then = now;
   requestAnimationFrame(main);
 }
-
-if (confirm("Ready?, Set?, Go!!!")) {
-  txt = "You pressed Ok!";
+//Game Start alert code. Code from W3 schools, edited the text.
+if (confirm("Ready?, Set? Go! Eat as many mobs as possible in 60 seconds")) {
+  txt = ("You pressed OK!");
 } else {
-  txt = "You pressed Cancel!";
+  txt = ("You pressed Cancel!");
 }
