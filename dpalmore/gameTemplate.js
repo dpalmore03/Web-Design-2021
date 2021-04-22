@@ -542,7 +542,7 @@ function main() {
   then = now;
   requestAnimationFrame(main);
 }
-//Game Start alert code. Code from W3 schools, edited the text.
+//Game Start alert code. Code from W3 schools, edited the text. 
 if (confirm("Ready?, Set? Go! Eat as many mobs as possible in 60 seconds")) {
   txt = ("You pressed OK!");
 } else {
