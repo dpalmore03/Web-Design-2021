@@ -5,6 +5,7 @@
 //Gravity code provided by Mr. Cozort in class
 //Timer/Counter code provided by Mr. Cozort
 //Game over alert code provided by Mr. Cozort
+//Background Image code provided by Mr. Cozort
 
 //RULES: Score as many points as possible by eating the mobs. One point is awarded for each of black and pink squares that are eaten.
 //RULES PT 2: Eat as many mobs as possible in 60 seconds before the game ends. Refresh page to restart the game after 60 seconds.
@@ -55,7 +56,13 @@ let mouseClick = {
   y: null
 };
 
-
+//Checks to see if the Image is ready
+let imgready = false;
+let backgroundimg = new Image();
+backgroundimg.src = '_images/_Mariobckgrdimg.jpg';
+backgroundimg.onload = function () {
+  backgroundimg.rdy = true;
+}
 function pointCollide(point, obj) {
   if (point.x <= obj.x + obj.w &&
     obj.x <= point.x &&
@@ -498,6 +505,8 @@ function update() {
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //draws background image
+  ctx.drawImage(backgroundimg, 0, 0);
   drawText('black', "24px Helvetica", "right", "top", "Timer: " + GAMETIME, 300, 0);
   drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
   // drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
