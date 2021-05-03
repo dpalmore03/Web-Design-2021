@@ -56,13 +56,14 @@ let mouseClick = {
   y: null
 };
 
-//Checks to see if the Image is ready
+//Checks to see if the Image is ready, applies the background image
 let imgready = false;
 let backgroundimg = new Image();
 backgroundimg.src = '_images/_Mariobckgrdimg.jpg';
 backgroundimg.onload = function () {
   backgroundimg.rdy = true;
 }
+  
 function pointCollide(point, obj) {
   if (point.x <= obj.x + obj.w &&
     obj.x <= point.x &&
@@ -507,9 +508,9 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   //draws background image
   ctx.drawImage(backgroundimg, 0, 0);
-  drawText('black', "24px Helvetica", "right", "top", "Timer: " + GAMETIME, 300, 0);
-  drawText('black', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
-  // drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
+  drawText('red', "24px Helvetica", "right", "top", "Timer: " + GAMETIME, 300, 0);
+  drawText('red', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
+  //drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
   // drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
   // drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
   // drawText('black', "24px Helvetica", "left", "top", "mouseclick: " + mouseClick.x + " " + mouseClick.y, 0, 32);
