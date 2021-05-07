@@ -26,6 +26,7 @@ let SCORE = 0;
 let GRAVITY = 9.8;
 let paused = false;
 let timerThen = Math.floor(Date.now() / 1000);
+let LEVEL = 1;
 
 //
 let effects = [];
@@ -379,14 +380,16 @@ class Effect extends Sprite {
       setTimeout(() => this.spliced = true, 250)
     }
 }
-
 // ###################### INSTANTIATE CLASSES ##########################
 let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'pink', 0, 0);
+  if(player.collide(mobs1))
+  this.speed +=5
+  console.log
+;
 
 // adds two different sets of mobs to the mobs array
-spawnMob(40, mobs1, 'black');
-spawnMob(40, mobs2, 'yellow');
-
+spawnMob(5, mobs1, 'black');
+spawnMob(5, mobs2, 'yellow');
 // Got rid of the walls because I do not think they serve any purpose for the game.
 //while (walls.length < 20){
   //walls.push(new Wall(200,15, Math.floor(Math.random()*500), Math.floor(Math.random()*1000), 'green'));
@@ -498,18 +501,27 @@ function update() {
       mobs2.splice(m, 1);
     }
   }
-  if (mobs1.length < 1){
-    spawnMob(40, mobs1);
+  //Spawns 5 of each mob and the code says that when 5 of mobs 1 are eaten, you move on to the next level.
+  if (mobs1.length < 1) {
+    spawnMob(5, mobs1, 'black');
+    spawnMob(5, mobs2, 'yellow');
+    LEVEL += 1;
   }
 }
+//Increases the speed of the player
+  if (LEVEL += 1) {
+    player.speed +=10
+  }
+  
   // ########## DRAW ALL ELEMENTS ON CANVAS ########## Displays Timer and Scoreboard on the canvas (Borrowed from Mr.cozort)
 function draw() {
   // clears the canvas before drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   //draws background image
   ctx.drawImage(backgroundimg, 0, 0);
-  drawText('red', "24px Helvetica", "right", "top", "Timer: " + GAMETIME, 300, 0);
-  drawText('red', "24px Helvetica", "left", "top", "Score: " + SCORE, 600, 0);
+  drawText('red', "24px Helvetica", "left", "top", "Level: " + LEVEL, 25, 0);
+  drawText('red', "24px Helvetica", "right", "top", "Timer: " + GAMETIME, 385, 0);
+  drawText('red', "24px Helvetica", "left", "top", "Score: " + SCORE, 650, 0);
   //drawText('black', "24px Helvetica", "left", "top", "FPS: " + fps, 400, 0);
   // drawText('black', "24px Helvetica", "left", "top", "Delta: " + gDelta, 400, 32);
   // drawText('black', "24px Helvetica", "left", "top", "mousepos: " + mouseX + " " + mouseY, 0, 0);
