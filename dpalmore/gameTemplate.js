@@ -1,18 +1,20 @@
 //sources
 // https://eloquentjavascript.net/code/chapter/17_canvas.js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
+//https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
 //Alert pop-up from W3 Schools, originally "Press enter", changed to "Ready, Set Go"
 //Gravity code provided by Mr. Cozort in class
 //Timer/Counter code provided by Mr. Cozort
 //Game over alert code provided by Mr. Cozort
 //Background Image code provided by Mr. Cozort
 
-//RULES: Score as many points as possible by eating the mobs. One point is awarded for each of black and pink squares that are eaten.
+//RULES: Score as many points as possible by eating the mobs. One point is awarded for each of black square that is eaten.
 //RULES PT 2: Eat as many mobs as possible in 60 seconds before the game ends. Refresh page to restart the game after 60 seconds.
-//RULES PT 3: Avoid Yellow Mobs!! If they are eaten, you lose a point each time. Try to Eat the Black and Pink Mobs only!
+//RULES PT 3: Avoid Yellow Mobs!! If they are eaten, you lose a point each time. Try to Eat the Black Mobs only!
 //RULES PT 4: If you sucessfuly eat all the black mobs in time, avoid the yellow ones as best you can before time runs out
 //RULES PT 5: Let's see how many points you can get! 
-
+//RULES PT 6: After you eat 5 black mobs, you advance to the next level.
+//Rules PT 7: The game increases in difficulty as there are more yellow mobs which make you lose points.
 //Code for this project provided by Mr. Cozort and online resources (W3 Schools, Pothon Programming)
 //##################### ALL GLOBALS AND UTILITY FUNCTIONS ###################
 
@@ -386,7 +388,6 @@ let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'pink', 0, 0);
   this.speed +=5
   console.log
 ;
-
 // adds two different sets of mobs to the mobs array
 spawnMob(5, mobs1, 'black');
 spawnMob(5, mobs2, 'yellow');
@@ -533,6 +534,9 @@ function draw() {
   }
   for (let m of mobs1){
     m.draw();
+    ctx.beginPath();
+    ctx.arc(100, 75, 50, 0, 2 * Math.PI);
+    ctx.stroke();
   }
   for (let m of mobs2){
     m.draw();
