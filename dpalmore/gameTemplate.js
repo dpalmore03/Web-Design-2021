@@ -1,12 +1,13 @@
 //sources
 // https://eloquentjavascript.net/code/chapter/17_canvas.js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
-//https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
+//https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc for circle code
 //Alert pop-up from W3 Schools, originally "Press enter", changed to "Ready, Set Go"
 //Gravity code provided by Mr. Cozort in class
 //Timer/Counter code provided by Mr. Cozort
 //Game over alert code provided by Mr. Cozort
 //Background Image code provided by Mr. Cozort
+//Background image 
 
 //RULES: Score as many points as possible by eating the mobs. One point is awarded for each of black square that is eaten.
 //RULES PT 2: Eat as many mobs as possible in 60 seconds before the game ends. Refresh page to restart the game after 60 seconds.
@@ -28,7 +29,7 @@ let SCORE = 0;
 let GRAVITY = 9.8;
 let paused = false;
 let timerThen = Math.floor(Date.now() / 1000);
-let LEVEL = 1;
+let LEVEL = 0;
 
 //
 let effects = [];
@@ -73,7 +74,7 @@ function pointCollide(point, obj) {
     point.y <= obj.y + obj.h &&
     obj.y <= point.y
   ) {
-    console.log('point collided');
+    //console.log('point collided');
     return true;
   }
 }
@@ -185,7 +186,7 @@ class Sprite {
           this.x > 0 &&
           this.y > 0 &&
           this.y + this.h < HEIGHT){
-            console.log ('inbounds..');
+            //console.log ('inbounds..');
         return true;
       }
       else{
@@ -275,7 +276,7 @@ class Player extends Sprite {
     paused = true;
 }
     else if (' ' in keysDown && this.canjump) { // Player control
-      console.log(this.canjump);
+      //console.log(this.canjump);
       this.vy -= 45;
       this.canjump = false;
       
@@ -301,7 +302,7 @@ class Player extends Sprite {
         this.canjump = true;
       }
       // alert('out of bounds');
-      // console.log('out of bounds');
+       //console.log('out of bounds');
     }
     
     this.x += this.vx;
@@ -332,10 +333,10 @@ class Mob extends Sprite {
           this.vy *= -1;
         }
         // alert('out of bounds');
-        // console.log('out of bounds');
+         //console.log('out of bounds');
       }
       if (pointCollide(mouseClick, this)){
-        console.log("direct hit!!!");
+        //console.log("direct hit!!!");
         // how do I tell it to be spliced???
         this.spliced = true;
         SCORE++;
@@ -386,7 +387,7 @@ class Effect extends Sprite {
 let player = new Player(25, 25, WIDTH/2, HEIGHT/2, 'pink', 0, 0);
   if(player.collide(mobs1))
   this.speed +=5
-  console.log
+  //console.log
 ;
 // adds two different sets of mobs to the mobs array
 spawnMob(5, mobs1, 'black');
@@ -422,7 +423,7 @@ addEventListener('mousemove', function (e) {
 
 // gets mouse position when clicked
 addEventListener('mousedown', function (e) {
-  // console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
+   //console.log(`Screen X/Y: ${e.screenX}, ${e.screenY}, Client X/Y: ${e.clientX}, ${e.clientY}`);
   mouseClick.x = e.offsetX;
   mouseClick.y = e.offsetY;
   effects.push(new Effect(15, 15, mouseClick.x - 7, mouseClick.y - 7, 'purple'))
@@ -488,7 +489,7 @@ function update() {
     if (player.collide(m)){
       SCORE-=1;
       m.spliced = true;
-      console.log(mobs2)
+      //console.log(mobs2)
     }
   }
   // splice stuff as needed
@@ -540,6 +541,10 @@ function draw() {
   }
   for (let m of mobs2){
     m.draw();
+    m.draw();
+    ctx.beginPath();
+    ctx.arc(700, 75, 50, 0, 2 * Math.PI);
+    ctx.stroke();
   }
   for (let e of effects){
     e.draw();
