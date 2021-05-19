@@ -7,7 +7,7 @@
 //Timer/Counter code provided by Mr. Cozort
 //Game over alert code provided by Mr. Cozort
 //Background Image code provided by Mr. Cozort
-//Background image 
+//Background image from google images
 
 //RULES: Score as many points as possible by eating the mobs. One point is awarded for each of black square that is eaten.
 //RULES PT 2: Eat as many mobs as possible in 60 seconds before the game ends. Refresh page to restart the game after 60 seconds.
@@ -16,7 +16,7 @@
 //RULES PT 5: Let's see how many points you can get! 
 //RULES PT 6: After you eat 5 black mobs, you advance to the next level.
 //Rules PT 7: The game increases in difficulty as there are more yellow mobs which make you lose points.
-//Code for this project provided by Mr. Cozort and online resources (W3 Schools, Pothon Programming)
+//Code for this project provided by Mr. Cozort and online resources (W3 Schools, Pothon Programming, MDN)
 //##################### ALL GLOBALS AND UTILITY FUNCTIONS ###################
 
 //initializing GLOBAL variables to create a canvas
@@ -33,7 +33,6 @@ let LEVEL = 0;
 
 //
 let effects = [];
-
 //walls
 let walls = [];
 
