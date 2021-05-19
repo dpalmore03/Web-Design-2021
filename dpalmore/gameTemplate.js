@@ -532,6 +532,7 @@ function draw() {
   for (let w of walls){
     w.draw();
   }
+  //circle code gotten from MDN/draws a circle into the game.
   for (let m of mobs1){
     m.draw();
     ctx.beginPath();
